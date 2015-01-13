@@ -4,16 +4,25 @@ This is a simple OpenCV wrapper for original SEEDS superpixels implementation. I
 ## Example
 
 ```c++
-cv::Mat image = cv::imread("star.png", cv::IMREAD_COLOR);
+#include "seeds_opencv.h"
 
-cv::Mat labels;
-int count;
-seeds(image, 2, 2, 4, labels, count);
+int main()
+{
+    cv::Mat image = cv::imread("star.png", cv::IMREAD_COLOR);
 
-cv::Mat contour;
-labelContourMask(labels, contour, false);
+    cv::Mat labels;
+    int count;
+    seeds(image, 2, 2, 4, labels, count);
 
-image.setTo(cv::Scalar(255, 255, 255), contour);
+    cv::Mat contour;
+    labelContourMask(labels, contour, false);
+
+    image.setTo(cv::Scalar(255, 255, 255), contour);
+
+    cv::imwrite("star_labels.png", image);
+
+    return 0;
+}
 ```
 
 [![Star](http://atilimcetin.com/SEEDS/star_small.png)](http://atilimcetin.com/SEEDS/star.png)
