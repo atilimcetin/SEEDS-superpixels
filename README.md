@@ -1,5 +1,5 @@
 # SEEDS Superpixels Wrapper for OpenCV
-This is a simple OpenCV wrapper for original SEEDS superpixels implementation. It uses the version 1.1 at [authors website](http://www.mvdblive.org/seeds/).
+This is a simple OpenCV wrapper for original SEEDS superpixels implementation. It uses the version 1.1 from [author's website](http://www.mvdblive.org/seeds/).
 
 ## Example
 
@@ -31,4 +31,4 @@ int main()
 
 ## License
 
-Wrapper is MIT license. Please refer to [authors website](http://www.mvdblive.org/seeds/) for the license of original SEEDS superpixels implementation.
+Wrapper is MIT license. Please refer to [author's website](http://www.mvdblive.org/seeds/) for the license of original SEEDS superpixels implementation.
