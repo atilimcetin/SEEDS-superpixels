@@ -1,5 +1,7 @@
 #include "seeds_opencv.h"
 #include "seeds2.h"
+#include <vector>
+#include <algorithm>
 
 using namespace cv;
 
@@ -15,6 +17,7 @@ void seeds(InputArray _image, int seed_width, int seed_height, int nr_levels, Ou
 
     int width = image.cols;
     int height = image.rows;
+    int npixels = width * height;
 
     const int NR_BINS = 5; // Number of bins in each histogram channel
 
@@ -22,7 +25,7 @@ void seeds(InputArray _image, int seed_width, int seed_height, int nr_levels, Ou
 
     seeds.initialize(seed_width, seed_height, nr_levels);
 
-    UINT *ubuff = new UINT[width * height];
+    vector<UINT> ubuff(npixels);
     for (int y = 0; y < height; ++y)
         for (int x = 0; x < width; ++x)
         {
@@ -36,18 +39,35 @@ void seeds(InputArray _image, int seed_width, int seed_height, int nr_levels, Ou
             ubuff[x + y * width] = b | (g << 8) | (r << 16);
         }
 
-    seeds.update_image_ycbcr(ubuff);
+    seeds.update_image_ycbcr(&ubuff[0]);
     seeds.iterate();
 
     UINT *slabels = seeds.get_labels();
+
+    UINT maxElem = *std::max_element(slabels, slabels + npixels);
+
+    vector<int> counts(maxElem + 1, 0);
+    for (int i = 0; i < npixels; ++i)
+        counts[slabels[i]]++;
+
+    vector<int> deltas(maxElem + 1);
+    int delta = 0;
+    for (size_t i = 0; i < counts.size(); ++i)
+    {
+        if (counts[i] == 0)
+            delta++;
+        deltas[i] = delta;
+    }
+
+    for (int i = 0; i < npixels; ++i)
+        slabels[i] -= deltas[slabels[i]];
+
     labels.create(height, width, CV_32SC1);
     for (int y = 0; y < height; ++y)
         for (int x = 0; x < width; ++x)
             labels.at<int>(y, x) = slabels[x + y * width];
 
-    count_superpixels = seeds.count_superpixels();
-
-    delete [] ubuff;
+    count_superpixels = maxElem - deltas[maxElem] + 1;
 }
 
 
